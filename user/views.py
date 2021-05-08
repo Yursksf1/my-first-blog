@@ -29,8 +29,8 @@ class LoginFormView(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            username = request.username
-            password = request.password
+            username = request.POST.get('username')
+            password = request.POST.get('password')
             user = authenticate(username=username, password=password)
             return redirect('saludo')
 
