@@ -41,3 +41,48 @@ def post_edit(request, pk):
 
 # def about(request):
 #     return render(request, 'blog/about.html')
+
+from django.views.generic import TemplateView
+
+class AboutView(TemplateView):
+    template_name = "blog/about.html"
+
+# TODO: check other example
+from django.views.generic import ListView
+
+class PostListView(ListView):
+    model = Post
+
+    def head(self, *args, **kwargs):
+        # last_book = self.get_queryset().latest('created_date')
+        posts = Post.objects.order_by('created_date')
+
+        response = HttpResponse(
+            # RFC 1123 date format.
+            posts=posts,
+        )
+        return response
+
+from django.views import View
+
+
+class PostFormView(View):
+    form_class = PostForm
+    initial = {}
+    template_name = 'blog/post_edit.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.published_date = timezone.now()
+            post.save()
+            return redirect('post_detail', pk=post.pk)
+
+        return render(request, self.template_name, {'form': form})
+
