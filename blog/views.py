@@ -6,7 +6,7 @@ from .forms import PostForm
 
 def post_list(request):
     posts = Post.objects.order_by('published_date')
-    return render(request, 'blog/post_list.html', {'posts': posts})
+    return render(request, 'blog/post_list2.html', {'posts': posts})
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -47,24 +47,12 @@ from django.views.generic import TemplateView
 class AboutView(TemplateView):
     template_name = "blog/about.html"
 
-# TODO: check other example
 from django.views.generic import ListView
 
 class PostListView(ListView):
     model = Post
 
-    def head(self, *args, **kwargs):
-        # last_book = self.get_queryset().latest('created_date')
-        posts = Post.objects.order_by('created_date')
-
-        response = HttpResponse(
-            # RFC 1123 date format.
-            posts=posts,
-        )
-        return response
-
 from django.views import View
-
 
 class PostFormView(View):
     form_class = PostForm
