@@ -32,6 +32,9 @@ class LoginFormView(View):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
+            if user:
+                auth_login(request, user)
+                return redirect('saludo')
             return redirect('saludo')
 
         return render(request, self.template_name, {'form': form})
